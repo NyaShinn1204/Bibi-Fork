@@ -7741,7 +7741,7 @@ O.log = (Log, A2, A3) => { let Obj = '', Tag = '';
             default    : Ls.unshift( `-`); Ls.push(Log);
         }
         for(let i = O.log.Depth; i > 1; i--) Ls.unshift('│');
-        Ls.unshift('%cBibi:'); Ss.unshift(O.log.NStyle);
+        Ls.unshift('%cBibi-Fork:'); Ss.unshift(O.log.NStyle);
         switch(Tag) {
           //case '<o/>': O.log.log('groupCollapsed', Ls, Ss); console.log(Obj); console.groupEnd(); break;
             default    : O.log.log('log',            Ls, Ss,              Obj                    );
