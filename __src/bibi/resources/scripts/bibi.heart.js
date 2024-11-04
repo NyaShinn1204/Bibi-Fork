@@ -298,7 +298,7 @@ Bibi.hello = () => {
     if(!document.getElementById('bibi-preset')) {
         const PresetName = D['preset'] || U['preset'] || 'default';
         // if(PresetName === '~') Promises.push(new Promise(resolve => P.preset.resolve = resolve)); else { // DO NOT ALLOW EXTERNAL OBJECT
-            const Preset = sML.create('script', { id: 'bibi-preset', src: 'presets/' + PresetName + '.js' });
+            const Preset = sML.create('script', { id: 'bibi-preset', src: '/novel/presets/' + PresetName + '.js' });
             Promises.push(new Promise(resolve => Preset.addEventListener('load', resolve)));
             document.head.insertBefore(Preset, Bibi.Script.nextSibling);
         // }
@@ -306,7 +306,7 @@ Bibi.hello = () => {
     if(!document.getElementById('bibi-dress')) {
         const DressName = D['dress'] || U['dress'] || 'everyday';
         // if(DressName === '~') Promises.push(new Promise(resolve => P.dress.resolve = resolve)); else { // DO NOT ALLOW EXTERNAL TEXT
-            const Dress = sML.create('link', { id: 'bibi-dress', rel: 'stylesheet', href: 'wardrobe/' + DressName + '/bibi.dress.css' });
+            const Dress = sML.create('link', { id: 'bibi-dress', rel: 'stylesheet', href: '/novel/wardrobe/' + DressName + '/bibi.dress.css' });
             Promises.push(new Promise(resolve => Dress.addEventListener('load', resolve)));
             document.head.insertBefore(Dress, Bibi.Style.nextSibling);
         // }
@@ -329,7 +329,7 @@ Bibi.hello = () => {
         O.log.initialize();
         O.log(`ようこそ!`, '<b:>');
         O.log(`[ja] ${ Bibi['href'] }`);
-        O.log(`[en] https://github.com/satorumurmur/bibi`);
+        O.log(`[en] https://github.com/NyaShinn1204/bibi-fork`);
     });
 };
 
@@ -376,7 +376,7 @@ Bibi.initialize = async () => {
         D.initialize();
         S.initialize();
         W.initialize();
-        I.initialize();
+        I.initialize(); // ここであるかどうかのチェック
         if(!S['book-data'] && S['book'] && !S['trustworthy-origins'].includes(new URL(S['book']).origin)) throw `The Origin of the Path of the Book Is Not Allowed.`;
     }
     { // Embedding, Window, Fullscreen
@@ -504,9 +504,10 @@ Bibi.busyHerself = () => new Promise(resolve => {
 Bibi.loadBook = (BookInfo) => Promise.resolve().then(() => {
     Bibi.busyHerself();
     I.notify(`読み込み中...`);
-    console.log("変化前のInfo: "+BookInfo);
+    console.log("変化前のInfo: "+BookInfo.Book);
 
-    const stdRegex = /^http:\/\/localhost:\d+\/bibi-bookshelf\/(std_st0[1-2])_(BID\d+)_novel_(\d+)$/;
+    // URL内から std_st01 または std_st02 のパターンに一致する部分を抽出
+    const stdRegex = /\/(std_st0[1-2])_(BID\d+)_novel_(\d+)$/;
     const match = BookInfo.Book.match(stdRegex);
     
     if (match) {
@@ -514,7 +515,7 @@ Bibi.loadBook = (BookInfo) => Promise.resolve().then(() => {
         const bookId = match[2];
         const novelPart = match[3];
         BookInfo.Book = `${server}/books/${bookId}/novel/unzip/${novelPart}`;
-        console.log(`変化後のInfo: ${BookInfo.Book}`);
+        console.log(`変更後のInfo: ${BookInfo.Book}`);
     }
 
     O.log(`Initializing Book...`, '<g:>');
@@ -7388,7 +7389,14 @@ U.translateData = (PnV) => {
 
 
 U.parseQuery = () => {
-    const LS = location.search; if(typeof LS != 'string') return;
+    // edit for my website
+    const LT = new URL(window.location.href);
+    const PP = LT.pathname.split('/');
+    const bookId = PP[3]; 
+    const chapter = PP[4];
+    const LS = `?book=std_st02_${bookId}_novel_${chapter}`;
+    console.log("わー:",LS)
+    if(typeof LS != 'string') return;
     let Query = LS.replace(/^\?/, '').split('&').reduce((Query, PnV) => {
         let [_P, _V] = PnV.split('=');
         if(!_V) _V = undefined;
@@ -7403,6 +7411,7 @@ U.parseQuery = () => {
     }, {});
     const DistilledQuery = Bibi.applyFilteredSettingsTo({}, Query, [Bibi.SettingTypes, Bibi.SettingTypes_UserOnly]);
     Object.assign(U, DistilledQuery);
+    console.log("なにこれ", Object.assign(Query, DistilledQuery))
     U['Query'] = Object.assign(Query, DistilledQuery);
     delete U.parseQuery;
 };
@@ -7507,6 +7516,7 @@ D.initialize = () => {
     if(D['book-data'] || D['book']) {
         // delete U['book'];
         let HRef = location.href.replace(/([\?&])book=[^&]*&?/, '$1');
+        console.log(HRef);
         if(!HRef.split('?')[1]) HRef = HRef.split('?')[0];
         history.replaceState(null, document.title, HRef);
     }
@@ -7528,6 +7538,7 @@ export const S = {}; // Bibi.Settings
 
 
 S.initialize = () => {
+    console.log(S);
     for(const Pro in S) if(typeof S[Pro] != 'function') delete S[Pro];
     sML.applyRtL(S, P, 'ExceptFunctions');
     sML.applyRtL(S, U, 'ExceptFunctions');
@@ -7541,7 +7552,9 @@ S.initialize = () => {
     if(!S['trustworthy-origins'].includes(O.Origin)) S['trustworthy-origins'].unshift(O.Origin);
     S['cache'] = (S['cache'] == 'no-store' || Bibi.Debug) ? 'no-store' : '';
     // --------
+    console.log("始めに: ",S["book"], S["book-data"]);
     S['book'] = (!S['book-data'] && typeof S['book'] == 'string' && S['book']) ? new URL(S['book'], S['bookshelf'] + '/').href : '';
+    console.log("次に: ",S["book"], S["book-data"]);
     // --------
     if(typeof S['parent-bibi-index'] != 'number') delete S['parent-bibi-index'];
     // --------
