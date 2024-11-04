@@ -327,7 +327,7 @@ Bibi.hello = () => {
     }));
     return Promise.all(Promises).then(() => {
         O.log.initialize();
-        O.log(`Hello!`, '<b:>');
+        O.log(`ようこそ!`, '<b:>');
         O.log(`[ja] ${ Bibi['href'] }`);
         O.log(`[en] https://github.com/satorumurmur/bibi`);
     });
@@ -407,7 +407,7 @@ Bibi.initialize = async () => {
         }).catch(() => resolve(false)));
     }
     { // Say Welcome or say Bye-bye
-        if(Bibi.isCompatible()) I.notify(`Welcome!`); else throw Bibi.byebye();
+        if(Bibi.isCompatible()) I.notify(`ようこそ!`); else throw Bibi.byebye();
     }
     { // Writing Mode, Font Size, Safe Area Size, Slider Size, Menu Height
         O.WritingModeProperty = (() => {
@@ -503,11 +503,24 @@ Bibi.busyHerself = () => new Promise(resolve => {
 
 Bibi.loadBook = (BookInfo) => Promise.resolve().then(() => {
     Bibi.busyHerself();
-    I.notify(`Loading...`);
+    I.notify(`読み込み中...`);
+    console.log("変化前のInfo: "+BookInfo);
+
+    const stdRegex = /^http:\/\/localhost:\d+\/bibi-bookshelf\/(std_st0[1-2])_(BID\d+)_novel_(\d+)$/;
+    const match = BookInfo.Book.match(stdRegex);
+    
+    if (match) {
+        const server = match[1] === "std_st01" ? "https://std-st01.minohaed.com" : "https://std-st02.minohaed.com";
+        const bookId = match[2];
+        const novelPart = match[3];
+        BookInfo.Book = `${server}/books/${bookId}/novel/unzip/${novelPart}`;
+        console.log(`変化後のInfo: ${BookInfo.Book}`);
+    }
+
     O.log(`Initializing Book...`, '<g:>');
     return L.initializeBook(BookInfo).then(InitializedAs => {
-        O.log(`${ InitializedAs }: %O`, B);
-        O.log(`Initialized. (as ${ /^[aiueo]/i.test(InitializedAs) ? 'an' : 'a' } ${ InitializedAs })`, '</g>');
+        O.log(`${InitializedAs}: %O`, B);
+        O.log(`Initialized. (as ${/^[aiueo]/i.test(InitializedAs) ? 'an' : 'a'} ${InitializedAs})`, '</g>');
     });
 }).then(() => {
     S.update();
@@ -604,12 +617,12 @@ Bibi.loadBook = (BookInfo) => Promise.resolve().then(() => {
     O.HTML.classList.add('loading-items');
     let LoadedItems = 0;
     return Promise.all(R.Spreads.map(Spread => new Promise(resolve => L.loadSpread(Spread, { AllowPlaceholderItems: S['allow-placeholders'] && Spread.Index != Bibi.StartOption.TargetSpreadIndex }).then(() => {
-        I.notify(`Loading Items... <span class="sotto">${ LoadedItems += Spread.Items.length }/${ R.Items.length }</span>`);
+        I.notify(`アイテムを読み込み中... (数が多いほど時間がかかります) <span class="sotto">${ LoadedItems += Spread.Items.length }/${ R.Items.length }</span>`);
         setTimeout(() => resolve(), 69);
         // !Bibi.StartOption.Reset ? R.layOutSpreadAndItsItems(Spread).then(resolve) : resolve();
     })))).then(async () => {
         O.log(`Loaded. (${ R.Items.length } in ${ R.Spreads.length })`, '</g>');
-        I.notify(`Processing...`);
+        I.notify(`処理中...`);
         await new Promise(resolve => setTimeout(resolve, 69));
         return E.dispatch('bibi:loaded-book', Bibi.Status = Bibi.Loaded = 'Loaded').then(() => O.HTML.classList.remove('loading-items'));
     });
@@ -621,7 +634,7 @@ Bibi.bindBook = async () => {
     //     R.organizePages();
     //     R.layOutStage();
     // }
-    I.notify(`Binding...`);
+    I.notify(`配置中...`);
     await new Promise(resolve => setTimeout(resolve, 69));
     return R.layOutBook(Bibi.StartOption)
         // .then(() => Bibi.StartOption.removeResetter())
@@ -636,8 +649,8 @@ Bibi.openBook = () => {
     I.Veil.close();
     L.Opened = true;
     document.body.click(); // To responce for user scrolling/keypressing immediately
-    I.notify('Here!', { Time: 999 });
-    O.log(`Enjoy Readings!`, '</b>');
+    I.notify('完了', { Time: 999 });
+    O.log(`読書を楽しんで!`, '</b>');
     return E.dispatch('bibi:opened', Bibi.Status = Bibi.Opened = 'Opened').then(() => E.dispatch('bibi:scrolled'));
 };
 
@@ -819,6 +832,7 @@ L.initializeBook = (BookInfo = {}) => new Promise((resolve, reject) => {
     if(BookDataFormat == 'URI') {
         // Online
         if(O.Local) return reject(`Bibi can't open books via ${ D['book'] ? 'data-bibi-book' : 'URL' } on local mode`);
+        console.log(BookInfo.Book)
         B.Path = BookInfo.Book;
         const RootSource = (B.Type == 'Zine' ? B.ZineData : B.Container).Source;
         const InitErrors = [], initialize_as = (FileOrFolder) => ({
@@ -4352,10 +4366,10 @@ I.Catcher = { create: () => { if(S['book-data'] || S['book'] || !S['accept-local
         ].join(''),
         ja: [
             `<div class="pgroup" lang="ja">`,
-                `<p><strong>EPUBファイルをここにください！</strong></p>`,
-                `<p><em>お持ちの EPUB ファイルを<br />開くことができます。</em></p>`,
+                `<p><strong>EPUBファイルをドラックしてください！</strong></p>`,
+                `<p><em>あなたがお持ちの EPUB ファイルを<br />開くことができます。</em></p>`,
                 `<p><span>${ O.TouchOS ? '画面をタップ' : 'ここにドラッグ＆ドロップするか、<br />画面をクリック' }して選択してください。</span></p>`,
-                `<p><small>（外部に送信されず、この端末の中で開きます）</small></p>`,
+                `<p><small>（サーバーに送信されず、端末の中で処理されます）</small></p>`,
             `</div>`
         ].join('')
     })[O.Language]);
@@ -4585,9 +4599,9 @@ I.Menu = { create: () => {
             });
             if(Components.includes('LinkageSection_BibiWebsiteLink')) Buttons.push({
                 Type: 'link',
-                Labels: { default: { default: `Bibi | Official Website` } },
+                Labels: { default: { default: `ホームへ戻る` } },
                 Icon: `<span class="bibi-icon bibi-icon-open-newwindow"></span>`,
-                href: Bibi['href'],
+                href: "https://dev.minohaed.com",
                 target: '_blank'
             });
             if(Buttons.length) {
@@ -4663,7 +4677,7 @@ I.Help = { create: () => {
 
 
 I.PoweredBy = { create: () => {
-    const PoweredBy = I.PoweredBy = O.Body.appendChild(sML.create('div', { id: 'bibi-poweredby', innerHTML: `<p><a href="${ Bibi['href'] }" target="_blank" title="Bibi | Official Website">Bibi</a></p>` }));
+    const PoweredBy = I.PoweredBy = O.Body.appendChild(sML.create('div', { id: 'bibi-poweredby', innerHTML: `<p><a href="https://dev.minohaed.com" target="_blank" title="ホームへ戻る">Bibi-Fork</a></p>` }));
     /*
     sML.appendCSSRule([ // Optimize to Scrollbar Size
         'html.appearance-horizontal div#bibi-poweredby',
@@ -7314,24 +7328,34 @@ Bibi.preset = P.preset;
 
 
 P.initialize = () => {
-    P['bookshelf'] = (P['bookshelf'] ? new URL(P['bookshelf'], P.Script.src) : new URL('../../../bibi-bookshelf', Bibi.Script.src)).href.replace(/\/$/, '');
+    if (typeof P['bookshelf'] === 'object') {
+        for (const key in P['bookshelf']) {
+            if (P['bookshelf'].hasOwnProperty(key)) {
+                P['bookshelf'][key] = new URL(P['bookshelf'][key], P.Script.src).href.replace(/\/$/, '');
+            }
+        }
+    } else {
+        P['bookshelf'] = (P['bookshelf'] ? new URL(P['bookshelf'], P.Script.src) : new URL('../../../bibi-bookshelf', Bibi.Script.src)).href.replace(/\/$/, '');
+    }
+    console.log(P['bookshelf'])
+
     P['extensions'] = (() => {
         let Extensions_HTML = Bibi.Script.getAttribute('data-bibi-extensions');
-        if(Extensions_HTML) {
+        if (Extensions_HTML) {
             const DocHRef = location.href.split('?')[0];
             Extensions_HTML = Extensions_HTML.trim().replace(/\s+/, ' ').split(' ').map(EPath => ({ src: new URL(EPath, DocHRef).href }));
-            if(Extensions_HTML.length) P['extensions'] = Extensions_HTML;
+            if (Extensions_HTML.length) P['extensions'] = Extensions_HTML;
         }
         return !Array.isArray(P['extensions']) ? [] : P['extensions'].filter(Xtn => {
-            if(Xtn.hasOwnProperty('-spell-of-activation-')) {
+            if (Xtn.hasOwnProperty('-spell-of-activation-')) {
                 const SoA = Xtn['-spell-of-activation-'];
-                if(!SoA || !/^[a-zA-Z0-9_\-]+$/.test(SoA) || !U.Query.hasOwnProperty(SoA)) return false;
+                if (!SoA || !/^[a-zA-Z0-9_\-]+$/.test(SoA) || !U.Query.hasOwnProperty(SoA)) return false;
             }
-            if(Xtn.hasOwnProperty('-extract-')) {
+            if (Xtn.hasOwnProperty('-extract-')) {
                 const Extract = Xtn['-extract-'] = Bibi.verifySettingValue('array', 'extract-if-necessary', Xtn['-extract-']);
-                if(Extract) X.Extractor = Xtn, P['extract-if-necessary'] = Extract;
+                if (Extract) X.Extractor = Xtn, P['extract-if-necessary'] = Extract;
             }
-            if(!Xtn || !Xtn['src'] || typeof Xtn['src'] != 'string') return false;
+            if (!Xtn || !Xtn['src'] || typeof Xtn['src'] != 'string') return false;
             return (Xtn['src'] = new URL(Xtn['src'], P.Script.src).href);
         });
     })();
