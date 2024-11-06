@@ -208,6 +208,10 @@ $DEFAULT__SPECIALICON__TogglePanel-Bars_Top: ($Menu-Icon_Size - ($DEFAULT__SPECI
 // - Book Icon
 // --------------------------------------------------------------------------------
 
+.dark-mode div#bibi-catcher>.book-icon span, .dark-mode div#bibi-catcher>.book-icon:after{
+    background: #AAAAAA;
+}
+
 @mixin DEFAULT__SPECIALICON__Book($SCOPED__Size, $SCOPED__OuterColor, $SCOPED__InnerColor, $SCOPED__Position: relative) {
 	$SCOPED__Line_Width: $SCOPED__Size * math.div(8, 128);
 	$SCOPED__Book_Width: $SCOPED__Size - $SCOPED__Line_Width * 2.5;

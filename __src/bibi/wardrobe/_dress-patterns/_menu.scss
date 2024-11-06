@@ -2,7 +2,6 @@
 // + Menu
 // --------------------------------------------------------------------------------
 
-
 div#bibi-menu, .bibi-extramenu {
 	html.appearance-vertical.slider-opened & {
 		width: calc(100% - #{$Slider_Size});
@@ -38,6 +37,11 @@ html:not(.book-full-height) {
 	&.panel-opened    div#bibi-menu,
 	&.subpanel-opened div#bibi-menu { background-color: $Menu_BackgroundColor__NotBFH__Hover; }
 	&.menu-opened     div#bibi-menu { background-color: $Menu_BackgroundColor__NotBFH__Active; box-shadow: $Menu_BoxShadow__NotBFH__Active; }
+}
+html.dark-mode.book-full-height.menu-opened {
+    div#bibi-menu {
+        background-color: #181818;
+   }
 }
 
 

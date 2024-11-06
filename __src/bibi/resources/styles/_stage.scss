@@ -99,6 +99,19 @@ body {
 // - Catcher
 // --------------------------------------------------------------------------------
 
+.dark-mode div#bibi-catcher{
+	background: linear-gradient(180deg, #181818, #282828);
+}
+
+.dark-mode div#bibi-catcher:after {
+    background: #333;
+    height: 39px;
+}
+
+.dark-mode html:not(.iOS):not(.Android) div#bibi-catcher:before {
+    border: 4px dashed #aaa;
+}
+
 div#bibi-catcher {
 	$SCOPED__CenterLine: 56%;
 	$SCOPED__Transition: .125s cubic-bezier(.2,.8,.8,1.6);

@@ -298,7 +298,7 @@ Bibi.hello = () => {
     if(!document.getElementById('bibi-preset')) {
         const PresetName = D['preset'] || U['preset'] || 'default';
         // if(PresetName === '~') Promises.push(new Promise(resolve => P.preset.resolve = resolve)); else { // DO NOT ALLOW EXTERNAL OBJECT
-            const Preset = sML.create('script', { id: 'bibi-preset', src: '/novel/presets/' + PresetName + '.js' });
+            const Preset = sML.create('script', { id: 'bibi-preset', src: '/bibi/presets/' + PresetName + '.js' });
             Promises.push(new Promise(resolve => Preset.addEventListener('load', resolve)));
             document.head.insertBefore(Preset, Bibi.Script.nextSibling);
         // }
@@ -306,7 +306,7 @@ Bibi.hello = () => {
     if(!document.getElementById('bibi-dress')) {
         const DressName = D['dress'] || U['dress'] || 'everyday';
         // if(DressName === '~') Promises.push(new Promise(resolve => P.dress.resolve = resolve)); else { // DO NOT ALLOW EXTERNAL TEXT
-            const Dress = sML.create('link', { id: 'bibi-dress', rel: 'stylesheet', href: '/novel/wardrobe/' + DressName + '/bibi.dress.css' });
+            const Dress = sML.create('link', { id: 'bibi-dress', rel: 'stylesheet', href: '/bibi/wardrobe/' + DressName + '/bibi.dress.css' });
             Promises.push(new Promise(resolve => Dress.addEventListener('load', resolve)));
             document.head.insertBefore(Dress, Bibi.Style.nextSibling);
         // }
@@ -508,14 +508,16 @@ Bibi.loadBook = (BookInfo) => Promise.resolve().then(() => {
 
     // URL内から std_st01 または std_st02 のパターンに一致する部分を抽出
     const stdRegex = /\/(std_st0[1-2])_(BID\d+)_novel_(\d+)$/;
-    const match = BookInfo.Book.match(stdRegex);
-    
-    if (match) {
-        const server = match[1] === "std_st01" ? "https://std-st01.minohaed.com" : "https://std-st02.minohaed.com";
-        const bookId = match[2];
-        const novelPart = match[3];
-        BookInfo.Book = `${server}/books/${bookId}/novel/unzip/${novelPart}`;
-        console.log(`変更後のInfo: ${BookInfo.Book}`);
+    if (BookInfo.Book !== undefined) {
+        const match = BookInfo.Book.match(stdRegex);
+        
+        if (match) {
+            const server = match[1] === "std_st01" ? "https://std-st01.minohaed.com" : "https://std-st02.minohaed.com";
+            const bookId = match[2];
+            const novelPart = match[3];
+            BookInfo.Book = `${server}/books/${bookId}/novel/unzip/${novelPart}`;
+            console.log(`変更後のInfo: ${BookInfo.Book}`);
+        }
     }
 
     O.log(`Initializing Book...`, '<g:>');
@@ -1753,6 +1755,11 @@ R.resetStage = () => {
     if(!S['use-full-height']) R.Stage.Height -= I.Menu.Height;
     if(S['content-margin'] > 0) R.Main.Book.style['padding' + C.L_BASE_S] = R.Main.Book.style['padding' + C.L_BASE_E] = S['content-margin'] + 'px';
     //R.Main.style['background'] = S['book-background'] ? S['book-background'] : '';
+    if (localStorage.getItem("ui-theme") !== null) {
+        if (localStorage.getItem("ui-theme") === "dark") {
+            R.Main.style['background'] = '#282828';
+        }
+    }
 };
 
 
@@ -7394,7 +7401,12 @@ U.parseQuery = () => {
     const PP = LT.pathname.split('/');
     const bookId = PP[3]; 
     const chapter = PP[4];
-    const LS = `?book=std_st02_${bookId}_novel_${chapter}`;
+    var LS = ""
+    if (bookId === undefined) {
+        LS = "?book=";
+    } else {
+        LS = `?book=std_st02_${bookId}_novel_${chapter}`;
+    }
     console.log("わー:",LS)
     if(typeof LS != 'string') return;
     let Query = LS.replace(/^\?/, '').split('&').reduce((Query, PnV) => {

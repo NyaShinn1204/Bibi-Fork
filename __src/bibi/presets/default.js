@@ -5,7 +5,8 @@ Bibi.preset({
 //-- Bookshelf
 //----------------------------------------------------------------------------------------------------------------------------------------------
 
-"bookshelf" : "../../bibi-bookshelf", // Relative path from this preset file to the bookshelf directory. "/" at the end is ignored.
+//"bookshelf" : "../../bibi-bookshelf", // Relative path from this preset file to the bookshelf directory. "/" at the end is ignored.
+"bookshelf" : {"std_st01": "https://std_st01.minohaed.com", "std_st02": "https://std_st02.minohaed.com"},
 // To use a path begins with "http(s)://", read <01> at the bottom.
 
 
@@ -214,7 +215,7 @@ Bibi.preset({
 // It makes Bibi to be able to open EPUBs including useful scripts.
 // But on the other hand, it may also allow XSS of malicious EPUB in some cases.
 
-/* !!!! BE CAREFUL !!!! */ "trustworthy-origins" : [], // Origins you trust other than where this Bibi is installed. <!> blank is highly recommended.
+/* !!!! BE CAREFUL !!!! */ "trustworthy-origins" : ["https://std-st02.minohaed.com","https://std-st01.minohaed.com"], // Origins you trust other than where this Bibi is installed. <!> blank is highly recommended.
 // If you add origins to it, Bibi is made to open not only EPUBs in the same origin as Bibi itself is installed but also EPUBs in remote origins.
 // It is useful for some cases like that you want to set directory on the other storaging server as "bookshelf".
 // But note that not to set an origin where someone else also can publish files.
