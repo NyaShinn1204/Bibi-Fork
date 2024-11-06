@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', Bibi.ring);
 if (localStorage.getItem("ui-theme") !== null) {
     if (localStorage.getItem("ui-theme") === "dark") {
         document.documentElement.classList.add('dark-mode');
-        alert("fuck!")
     }
 } else {
     localStorage.setItem("ui-theme", "light");
