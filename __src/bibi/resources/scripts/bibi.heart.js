@@ -1755,11 +1755,6 @@ R.resetStage = () => {
     if(!S['use-full-height']) R.Stage.Height -= I.Menu.Height;
     if(S['content-margin'] > 0) R.Main.Book.style['padding' + C.L_BASE_S] = R.Main.Book.style['padding' + C.L_BASE_E] = S['content-margin'] + 'px';
     //R.Main.style['background'] = S['book-background'] ? S['book-background'] : '';
-    if (localStorage.getItem("ui-theme") !== null) {
-        if (localStorage.getItem("ui-theme") === "dark") {
-            R.Main.style['background'] = '#282828';
-        }
-    }
 };
 
 
