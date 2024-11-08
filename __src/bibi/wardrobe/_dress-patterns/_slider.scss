@@ -2,6 +2,13 @@
 // + Slider
 // --------------------------------------------------------------------------------
 
+.dark-mode div#bibi-slider::after {
+	background: #333333;
+}
+html.dark-mode.slider-opened div#bibi-slider:after {
+	background: #595959;
+}
+
 div#bibi-slider {
 	& {
 		box-shadow: $Slider_BoxShadow;
@@ -158,6 +165,10 @@ div#bibi-slider-edgebar-box {
 
 // - Edgebar
 // --------------------------------------------------------------------------------
+
+.dark-mode div#bibi-slider-edgebar {
+	background: #333333;
+}
 
 div#bibi-slider-edgebar {
 	border-radius: $Slider-Edgebar_BorderRadius;

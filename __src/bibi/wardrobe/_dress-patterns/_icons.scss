@@ -245,6 +245,7 @@
 // -- In Subpanel
 .bibi-icon-full-breadth-layout,
 .bibi-icon-toggle-fullscreen,
+.bibi-icon-toggle-darkmode,
 .bibi-icon-open-newwindow,
 .bibi-icon-fontsize,
 .bibi-icon-bookmark { @include GENERALICON__Common(); }
@@ -284,6 +285,7 @@
 
 .bibi-icon-full-breadth-layout,
 .bibi-icon-toggle-fullscreen,
+.bibi-icon-toggle-darkmode,
 .bibi-icon-open-newwindow,
 .bibi-icon-fontsize,
 .bibi-icon-bookmark { @include GENERALICON__CommonInSubpanels(); }
@@ -291,6 +293,8 @@
 .bibi-icon-full-breadth-layout { @include GENERALICON__UseFullBreadth(); }
 
 .bibi-icon-toggle-fullscreen { @include GENERALICON__ToggleFullscreen(); }
+
+.bibi-icon-toggle-darkmode { @include GENERALICON__ToggleDarkmode(); }
 
 .bibi-icon-open-newwindow { @include GENERALICON__OpenNewWindow(); }
 

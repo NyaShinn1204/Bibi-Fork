@@ -147,6 +147,12 @@
 	}
 }
 
+@mixin GENERALICON__ToggleDarkmode() {
+	&:before {
+		content: "lightbulb";
+	}
+}
+
 @mixin GENERALICON__OpenNewWindow() {
 	&:before {
 		content: "open_in_new";

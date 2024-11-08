@@ -654,6 +654,11 @@ Bibi.openBook = () => {
     document.body.click(); // To responce for user scrolling/keypressing immediately
     I.notify('完了', { Time: 999 });
     O.log(`読書を楽しんで!`, '</b>');
+    if(!O.DarkmodeButton) O.DarkmodeButton = document.getElementById('bibi-button-toggle-darkmode');
+    if (localStorage.getItem("ui-theme") === "dark") {
+        document.documentElement.classList.add('dark-mode');
+        I.setUIState(O.DarkmodeButton, 'active');
+    }
     return E.dispatch('bibi:opened', Bibi.Status = Bibi.Opened = 'Opened').then(() => E.dispatch('bibi:scrolled'));
 };
 
@@ -4476,6 +4481,7 @@ I.Menu = { create: () => {
         if(!S['fix-reader-view-mode'] && S['available-reader-view-modes'].length > 1)                      Components.push('ViewModeSection');
         if(O.Embedded)                                                                                     Components.push('WindowSection'), Components.push('WindowSection_NewWindowButton');
         if(O.FullscreenTarget && !O.TouchOS)                                                               Components.push('WindowSection'), Components.push('WindowSection_FullscreenButton');
+                                                                                                           Components.push('WindowSection'), Components.push('WindowSection_DarkmodeButton');
         if(S['website-href'] && /^https?:\/\/[^\/]+/.test(S['website-href']) && S['website-name-in-menu']) Components.push('LinkageSection'), Components.push('LinkageSection_WebsiteLink');
         if(!S['remove-bibi-website-link'])                                                                 Components.push('LinkageSection'), Components.push('LinkageSection_BibiWebsiteLink');
         if(!Components.length) {
@@ -4584,6 +4590,29 @@ I.Menu = { create: () => {
                     }
                 });
             }
+            if (Components.includes('WindowSection_DarkmodeButton')) {
+                Buttons.push({
+                    Type: 'toggle',
+                    Labels: {
+                        default: { default: `<span class="non-visual">Enter </span>Darkmode`, ja: `ダークモード<span class="non-visual">で表示</span>` },
+                        active:  { default: `<span class="non-visual">Exit </span>Darkmode`, ja: `ダークモード<span class="non-visual">を解除</span>` }
+                    },
+                    Icon: `<span class="bibi-icon bibi-icon-toggle-darkmode"></span>`,
+                    id: 'bibi-button-toggle-darkmode',
+                    action: function() {
+                        let currentTheme = localStorage.getItem("ui-theme");                        
+                        if (currentTheme === "dark") {
+                            document.documentElement.classList.remove('dark-mode');
+                            localStorage.setItem("ui-theme", "light");
+                        } else {
+                            document.documentElement.classList.add('dark-mode');
+                            localStorage.setItem("ui-theme", "dark");
+                        }
+                        Config.close();
+                    }
+                });
+            }
+            
             if(Buttons.length) {
                 const Section = Config.WindowSection = Config.addSection({ Labels: { default: { default: `Window Control`, ja: `ウィンドウ制御` } } });
                 Section.addButtonGroup({ Buttons: Buttons });
